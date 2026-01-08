@@ -7,33 +7,19 @@
 </head>
 
 <body class="register">
-
     <div class="register-container">
         <h1>Confirm Account</h1>
 
-        <p style="margin-bottom:20px;">
-            Enter the confirmation code you received by email.
-        </p>
+        <p>Enter the confirmation code you received by email.</p>
 
         <form class="register-form" method="POST" action="/confirm">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="code" placeholder="Confirmation Code" required>
 
-            <input type="email"
-                   name="email"
-                   placeholder="Email"
-                   required>
-
-            <input type="text"
-                   name="code"
-                   placeholder="Confirmation Code"
-                   required>
-
-            <button type="submit" class="btn">
-                Confirm Account
-            </button>
+            <button class="btn" type="submit">Confirm Account</button>
         </form>
 
         <a href="/" class="btn back">⬅ Back</a>
     </div>
-
 </body>
 </html>

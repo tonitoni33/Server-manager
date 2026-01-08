@@ -37,6 +37,10 @@ app.get("/create-account", (_, res) =>
     res.sendFile(path.join(__dirname, "../views/register.html"))
 );
 
+app.get("/confirm", (_, res) =>
+    res.sendFile(path.join(__dirname, "../views/confirm.html"))
+);
+
 app.get("/PlayTheGame", (_, res) =>
     res.sendFile(path.join(__dirname, "../views/PlayTheGame.html"))
 );
@@ -51,10 +55,6 @@ app.get("/about", (_, res) =>
 
 app.get("/screenshots", (_, res) =>
     res.sendFile(path.join(__dirname, "../views/Screenshots.html"))
-);
-
-app.get("/confirm", (_, res) =>
-    res.sendFile(path.join(__dirname, "../views/confirm.html"))
 );
 
 // =======================
@@ -89,13 +89,11 @@ app.post("/register", async (req, res) => {
     try {
         const { email, username, password, captcha } = req.body;
 
-        if (!email || !username || !password || !captcha) {
+        if (!email || !username || !password || !captcha)
             return res.status(400).send("Missing fields");
-        }
 
-        if (captcha !== "7") {
+        if (captcha !== "7")
             return res.status(400).send("Captcha failed");
-        }
 
         if (await User.findOne({ email }))
             return res.send("Email already exists");
@@ -125,11 +123,8 @@ app.post("/register", async (req, res) => {
             `
         });
 
-        res.send(`
-            <h2>Account created</h2>
-            <p>Check your email for the confirmation code.</p>
-            <a href="/confirm">Confirm account</a>
-        `);
+        // 🔑 redirect automatico
+        res.redirect("/confirm");
 
     } catch (err) {
         console.error(err);
@@ -169,24 +164,18 @@ app.post("/login", async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        if (!username || !password) {
+        if (!username || !password)
             return res.json({ success: false, message: "Missing fields" });
-        }
 
         const user = await User.findOne({ username, confirmed: true });
-        if (!user) {
+        if (!user)
             return res.json({ success: false, message: "Invalid username" });
-        }
 
         const valid = await bcrypt.compare(password, user.password);
-        if (!valid) {
+        if (!valid)
             return res.json({ success: false, message: "Wrong password" });
-        }
 
-        res.json({
-            success: true,
-            message: "Login successful"
-        });
+        res.json({ success: true, message: "Login successful" });
 
     } catch (err) {
         console.error(err);

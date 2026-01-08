@@ -7,61 +7,27 @@
 </head>
 
 <body class="register">
-
     <div class="register-container">
         <h1>Create Account</h1>
 
-        <!-- IMMAGINE DECORATIVA -->
-        <img src="/public/images/Register.png"
-             alt="Register Art"
-             class="register-thumb">
+        <img src="/public/images/Register.png" class="register-thumb">
 
-        <!-- FORM REGISTRAZIONE -->
         <form class="register-form" method="POST" action="/register">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
 
-            <input type="email"
-                   name="email"
-                   placeholder="Email"
-                   required>
+            <label class="captcha">What is <strong>3 + 4</strong>?</label>
+            <input type="text" name="captcha" placeholder="Answer" required>
 
-            <input type="text"
-                   name="username"
-                   placeholder="Username"
-                   required>
-
-            <input type="password"
-                   name="password"
-                   placeholder="Password"
-                   required>
-
-            <!-- CAPTCHA SEMPLICE -->
-            <label class="captcha">
-                What is <strong>3 + 4</strong>?
-            </label>
-
-            <input type="text"
-                   name="captcha"
-                   placeholder="Answer"
-                   required>
-
-            <button type="submit" class="btn">
-                Register
-            </button>
+            <button class="btn" type="submit">Register</button>
         </form>
 
-        <!-- INFO EMAIL -->
-        <p style="margin-top:15px;font-size:0.9rem;opacity:0.8;">
+        <p style="margin-top:15px;font-size:0.9rem;">
             You will receive a confirmation code by email.
         </p>
 
-        <!-- LINK CONFERMA -->
-        <a href="/confirm" style="display:block;margin-top:10px;">
-            Already have a code? Confirm account
-        </a>
-
-        <!-- BACK -->
         <a href="/" class="btn back">⬅ Back</a>
     </div>
-
 </body>
 </html>
