@@ -27,9 +27,7 @@ app.use("/public", express.static(path.join(__dirname, "../public")));
 // =======================
 // HEALTH CHECK (RENDER)
 // =======================
-app.get("/health", (req, res) => {
-    res.status(200).send("OK");
-});
+app.get("/health", (_, res) => res.send("OK"));
 
 // =======================
 // PAGES
@@ -63,7 +61,7 @@ app.get("/screenshots", (_, res) =>
 );
 
 // =======================
-// START SERVER (PRIMA)
+// START SERVER
 // =======================
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
@@ -72,7 +70,8 @@ app.listen(PORT, () => {
 // =======================
 // MONGODB
 // =======================
-mongoose.connect(process.env.MONGODB_URI)
+mongoose
+    .connect(process.env.MONGODB_URI)
     .then(() => console.log("🟢 MongoDB connected"))
     .catch(err => console.error("🔴 MongoDB error:", err));
 
@@ -106,20 +105,36 @@ app.post("/register", async (req, res) => {
             confirmed: false
         });
 
-        // 📧 EMAIL CON RESEND (OK SU RENDER)
-        await resend.emails.send({
-            from: "Silent Bay Studios <onboarding@resend.dev>",
-            to: email,
-            subject: "Confirm your account",
-            html: `
-                <h2>Welcome to Escape From The Court</h2>
-                <p>Your confirmation code:</p>
-                <h1>${confirmCode}</h1>
-            `
-        });
+        let emailSent = false;
 
-        // redirect automatico
-        res.redirect("/confirm");
+        try {
+            await resend.emails.send({
+                from: "Silent Bay Studios <onboarding@resend.dev>", // sandbox
+                to: email,
+                subject: "Confirm your account",
+                html: `
+          <h2>Welcome to Escape From The Court</h2>
+          <p>Your confirmation code:</p>
+          <h1>${confirmCode}</h1>
+        `
+            });
+            emailSent = true;
+        } catch (mailErr) {
+            console.warn("⚠️ EMAIL NOT SENT (sandbox):", mailErr.message);
+        }
+
+        console.log("🔐 CONFIRM CODE:", confirmCode);
+
+        // 🔁 redirect + fallback
+        res.send(`
+      <h2>Account created</h2>
+      ${emailSent
+                ? "<p>Check your email for the confirmation code.</p>"
+                : `<p><b>Email not delivered (sandbox).</b><br>Your confirmation code is:</p>
+             <h1>${confirmCode}</h1>`
+            }
+      <a href="/confirm">Go to confirmation</a>
+    `);
 
     } catch (err) {
         console.error("REGISTER ERROR:", err);
@@ -142,9 +157,9 @@ app.post("/confirm", async (req, res) => {
         await user.save();
 
         res.send(`
-            <h2>Account confirmed successfully!</h2>
-            <a href="/">Go Home</a>
-        `);
+      <h2>Account confirmed successfully!</h2>
+      <a href="/">Go Home</a>
+    `);
 
     } catch (err) {
         console.error(err);
@@ -153,7 +168,7 @@ app.post("/confirm", async (req, res) => {
 });
 
 // =======================
-// LOGIN (PER UNITY)
+// LOGIN (UNITY)
 // =======================
 app.post("/login", async (req, res) => {
     try {
