@@ -10,10 +10,12 @@
     <div class="register-container">
         <h1>Confirm Account</h1>
 
-        <p>Enter the confirmation code you received by email.</p>
+        <p>Your confirmation code is:</p>
+
+        <h2 id="codeBox" style="letter-spacing:3px;"></h2>
 
         <form class="register-form" method="POST" action="/confirm">
-            <input type="email" name="email" placeholder="Email" required>
+            <input type="email" name="email" id="emailField" required>
             <input type="text" name="code" placeholder="Confirmation Code" required>
 
             <button class="btn" type="submit">Confirm Account</button>
@@ -21,5 +23,17 @@
 
         <a href="/" class="btn back">⬅ Back</a>
     </div>
+
+    <script>const params = new URLSearchParams(window.location.search);
+        const code = params.get("code");
+        const email = params.get("email");
+
+        if (code) {
+            document.getElementById("codeBox").innerText = code;
+        }
+
+        if (email) {
+            document.getElementById("emailField").value = email;
+        }</script>
 </body>
 </html>

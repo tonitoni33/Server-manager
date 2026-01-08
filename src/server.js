@@ -5,17 +5,11 @@ const path = require("path");
 const crypto = require("crypto");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const { Resend } = require("resend");
 
 const User = require("../models/User");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// =======================
-// RESEND
-// =======================
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 // =======================
 // MIDDLEWARE
@@ -76,7 +70,7 @@ mongoose
     .catch(err => console.error("🔴 MongoDB error:", err));
 
 // =======================
-// REGISTER
+// REGISTER (CODICE A SCHERMO)
 // =======================
 app.post("/register", async (req, res) => {
     try {
@@ -105,36 +99,12 @@ app.post("/register", async (req, res) => {
             confirmed: false
         });
 
-        let emailSent = false;
+        console.log("CONFIRM CODE:", confirmCode);
 
-        try {
-            await resend.emails.send({
-                from: "Silent Bay Studios <onboarding@resend.dev>", // sandbox
-                to: email,
-                subject: "Confirm your account",
-                html: `
-          <h2>Welcome to Escape From The Court</h2>
-          <p>Your confirmation code:</p>
-          <h1>${confirmCode}</h1>
-        `
-            });
-            emailSent = true;
-        } catch (mailErr) {
-            console.warn("⚠️ EMAIL NOT SENT (sandbox):", mailErr.message);
-        }
-
-        console.log("🔐 CONFIRM CODE:", confirmCode);
-
-        // 🔁 redirect + fallback
-        res.send(`
-      <h2>Account created</h2>
-      ${emailSent
-                ? "<p>Check your email for the confirmation code.</p>"
-                : `<p><b>Email not delivered (sandbox).</b><br>Your confirmation code is:</p>
-             <h1>${confirmCode}</h1>`
-            }
-      <a href="/confirm">Go to confirmation</a>
-    `);
+        // redirect alla pagina confirm con codice visibile
+        res.redirect(
+            `/confirm?email=${encodeURIComponent(email)}&code=${confirmCode}`
+        );
 
     } catch (err) {
         console.error("REGISTER ERROR:", err);
@@ -150,19 +120,20 @@ app.post("/confirm", async (req, res) => {
         const { email, code } = req.body;
 
         const user = await User.findOne({ email, confirmCode: code });
-        if (!user) return res.send("Invalid confirmation code");
+        if (!user)
+            return res.send("Invalid confirmation code");
 
         user.confirmed = true;
         user.confirmCode = null;
         await user.save();
 
         res.send(`
-      <h2>Account confirmed successfully!</h2>
-      <a href="/">Go Home</a>
-    `);
+            <h2>Account confirmed successfully!</h2>
+            <a href="/">Go Home</a>
+        `);
 
     } catch (err) {
-        console.error(err);
+        console.error("CONFIRM ERROR:", err);
         res.status(500).send("Server error");
     }
 });
@@ -185,10 +156,16 @@ app.post("/login", async (req, res) => {
         if (!valid)
             return res.json({ success: false, message: "Wrong password" });
 
-        res.json({ success: true, message: "Login successful" });
+        res.json({
+            success: true,
+            message: "Login successful"
+        });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: "Server error" });
+        console.error("LOGIN ERROR:", err);
+        res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
     }
 });
