@@ -20,59 +20,59 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "../public")));
 
 // =======================
-// HEALTH CHECK (FONDAMENTALE PER RENDER)
+// HEALTH CHECK (RENDER)
 // =======================
 app.get("/health", (req, res) => {
     res.status(200).send("OK");
 });
 
 // =======================
-// ROUTES (PAGES)
+// PAGES
 // =======================
-app.get("/", (req, res) =>
+app.get("/", (_, res) =>
     res.sendFile(path.join(__dirname, "../views/home.html"))
 );
 
-app.get("/create-account", (req, res) =>
+app.get("/create-account", (_, res) =>
     res.sendFile(path.join(__dirname, "../views/register.html"))
 );
 
-app.get("/PlayTheGame", (req, res) =>
+app.get("/PlayTheGame", (_, res) =>
     res.sendFile(path.join(__dirname, "../views/PlayTheGame.html"))
 );
 
-app.get("/follow-us", (req, res) =>
+app.get("/follow-us", (_, res) =>
     res.sendFile(path.join(__dirname, "../views/follow.html"))
 );
 
-app.get("/about", (req, res) =>
+app.get("/about", (_, res) =>
     res.sendFile(path.join(__dirname, "../views/about.html"))
 );
 
-app.get("/screenshots", (req, res) =>
+app.get("/screenshots", (_, res) =>
     res.sendFile(path.join(__dirname, "../views/Screenshots.html"))
 );
 
-app.get("/confirm", (req, res) =>
+app.get("/confirm", (_, res) =>
     res.sendFile(path.join(__dirname, "../views/confirm.html"))
 );
 
 // =======================
-// START SERVER (PRIMA DI TUTTO)
+// START SERVER (PRIMA)
 // =======================
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
 
 // =======================
-// MONGODB (DOPO LO START)
+// MONGODB (DOPO)
 // =======================
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log("🟢 MongoDB connected"))
     .catch(err => console.error("🔴 MongoDB error:", err));
 
 // =======================
-// EMAIL (SENZA verify)
+// EMAIL
 // =======================
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -90,18 +90,18 @@ app.post("/register", async (req, res) => {
         const { email, username, password, captcha } = req.body;
 
         if (!email || !username || !password || !captcha) {
-            return res.send("Missing fields");
+            return res.status(400).send("Missing fields");
         }
 
         if (captcha !== "7") {
-            return res.send("Captcha failed");
+            return res.status(400).send("Captcha failed");
         }
 
-        const emailExists = await User.findOne({ email });
-        if (emailExists) return res.send("Email already exists");
+        if (await User.findOne({ email }))
+            return res.send("Email already exists");
 
-        const usernameExists = await User.findOne({ username });
-        if (usernameExists) return res.send("Username already exists");
+        if (await User.findOne({ username }))
+            return res.send("Username already exists");
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const confirmCode = crypto.randomInt(100000, 999999).toString();
@@ -155,8 +155,41 @@ app.post("/confirm", async (req, res) => {
             <h2>Account confirmed successfully!</h2>
             <a href="/">Go Home</a>
         `);
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Server error");
+    }
+});
+
+// =======================
+// LOGIN (PER UNITY)
+// =======================
+app.post("/login", async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        if (!username || !password) {
+            return res.json({ success: false, message: "Missing fields" });
+        }
+
+        const user = await User.findOne({ username, confirmed: true });
+        if (!user) {
+            return res.json({ success: false, message: "Invalid username" });
+        }
+
+        const valid = await bcrypt.compare(password, user.password);
+        if (!valid) {
+            return res.json({ success: false, message: "Wrong password" });
+        }
+
+        res.json({
+            success: true,
+            message: "Login successful"
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Server error" });
     }
 });
