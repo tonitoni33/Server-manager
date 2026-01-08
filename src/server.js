@@ -3,14 +3,19 @@
 const express = require("express");
 const path = require("path");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const { Resend } = require("resend");
 
 const User = require("../models/User");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// =======================
+// RESEND
+// =======================
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // =======================
 // MIDDLEWARE
@@ -65,22 +70,11 @@ app.listen(PORT, () => {
 });
 
 // =======================
-// MONGODB (DOPO)
+// MONGODB
 // =======================
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log("🟢 MongoDB connected"))
     .catch(err => console.error("🔴 MongoDB error:", err));
-
-// =======================
-// EMAIL
-// =======================
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
 
 // =======================
 // REGISTER
@@ -112,8 +106,9 @@ app.post("/register", async (req, res) => {
             confirmed: false
         });
 
-        await transporter.sendMail({
-            from: `Silent Bay Studios <${process.env.EMAIL_USER}>`,
+        // 📧 EMAIL CON RESEND (OK SU RENDER)
+        await resend.emails.send({
+            from: "Silent Bay Studios <onboarding@resend.dev>",
             to: email,
             subject: "Confirm your account",
             html: `
@@ -123,11 +118,11 @@ app.post("/register", async (req, res) => {
             `
         });
 
-        // 🔑 redirect automatico
+        // redirect automatico
         res.redirect("/confirm");
 
     } catch (err) {
-        console.error(err);
+        console.error("REGISTER ERROR:", err);
         res.status(500).send("Server error");
     }
 });
