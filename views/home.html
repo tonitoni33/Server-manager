@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>ESCAPE FROM THE COURT - STREET WARS</title>
+    <link rel="stylesheet" href="/public/css/style.css">
+</head>
+
+<body class="home">
+
+    <div class="overlay">
+        <h1>ESCAPE FROM THE COURT - STREET WARS</h1>
+
+        <div class="menu">
+            <a href="https://silent-bay-studios.itch.io/"
+               class="btn"
+               target="_blank"
+               rel="noopener noreferrer">
+                Home Page
+            </a>
+
+            <a href="/create-account" class="btn">Create Account</a>
+            <a href="/PlayTheGame" class="btn">Play The Game</a>
+            <a href="/follow-us" class="btn">Follow Us</a>
+            <a href="/about" class="btn">About the Game</a>
+            <a href="/screenshots" class="btn">Screenshots</a>
+        </div>
+    </div>
+
+    <!-- =======================
+         BACKGROUND MUSIC
+    ======================= -->
+    <audio id="bg-music" loop>
+        <source src="/public/audio/menu-music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- MUSIC TOGGLE BUTTON -->
+    <button id="music-btn" class="btn music-btn">
+        🔊 Music: OFF
+    </button>
+
+    <script>const music = document.getElementById("bg-music");
+        const musicBtn = document.getElementById("music-btn");
+        let musicEnabled = false;
+
+        // Avvia musica al primo click dell'utente
+        document.addEventListener("click", () => {
+            if (!musicEnabled) {
+                music.volume = 0.3;
+                music.play();
+                musicEnabled = true;
+                musicBtn.textContent = "🔊 Music: ON";
+            }
+        }, { once: true });
+
+        // Toggle manuale
+        musicBtn.addEventListener("click", (e) => {
+            e.stopPropagation(); // evita conflitto col click globale
+
+            if (music.paused) {
+                music.play();
+                musicBtn.textContent = "🔊 Music: ON";
+            } else {
+                music.pause();
+                musicBtn.textContent = "🔇 Music: OFF";
+            }
+        });</script>
+
+</body>
+</html>

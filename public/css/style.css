@@ -1,0 +1,235 @@
+﻿/* =======================
+   RESET
+======================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* =======================
+   BASE
+======================= */
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+    /* =======================
+   HOME BACKGROUND
+======================= */
+    body.home {
+        background-image: url("/public/images/background-home-page.png");
+        background-repeat: no-repeat;
+        background-position: center top;
+        background-size: 80%;
+    }
+
+/* =======================
+   HOME OVERLAY
+======================= */
+.overlay {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+    /* HOME TITLE */
+    .overlay h1 {
+        font-size: 3rem;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+/* =======================
+   MENU
+======================= */
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 240px;
+}
+
+/* =======================
+   BUTTONS (GLOBAL)
+======================= */
+.btn {
+    padding: 14px;
+    background: #ff9800;
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+    .btn:hover {
+        background: #ffc107;
+        transform: scale(1.05);
+    }
+
+/* =======================
+   SCREENSHOTS PAGE
+======================= */
+body.screenshots {
+    background: #000;
+    color: white;
+}
+
+.screenshots-title {
+    text-align: center;
+    margin: 40px 0 20px;
+    font-size: 2.5rem;
+}
+
+/* ART GRID */
+.art-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin: 60px auto;
+    flex-wrap: wrap;
+}
+
+.art-thumb {
+    width: 300px;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .art-thumb:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 40px rgba(255,255,255,0.25);
+    }
+
+/* =======================
+   ABOUT PAGE
+======================= */
+body.about {
+    background: #000;
+    color: white;
+}
+
+.about-container {
+    max-width: 800px;
+    margin: 100px auto 0;
+    text-align: center;
+    padding: 20px;
+}
+
+    .about-container p {
+        margin-top: 20px;
+        margin-bottom: 40px;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .about-container .back {
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+/* =======================
+   REGISTER PAGE
+======================= */
+body.register {
+    background: #000;
+    color: white;
+}
+
+.register-container {
+    max-width: 400px;
+    margin: 100px auto 0;
+    text-align: center;
+    padding: 20px;
+}
+
+.register-thumb {
+    width: 200px;
+    margin: 30px auto;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+
+/* FORM */
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+    .register-form input {
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+    }
+
+    .register-form .btn {
+        margin-top: 10px;
+    }
+
+body.register .back {
+    display: inline-block;
+    margin-top: 35px;
+    padding: 10px 22px;
+}
+
+/* =======================
+   FOLLOW PAGE (NO POPUP)
+======================= */
+body.follow {
+    background: #000;
+    color: white;
+}
+
+/* CONTENITORE */
+.follow-container {
+    min-height: 100vh;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    text-align: center;
+}
+
+/* IMMAGINE FISSA */
+.follow-image {
+    width: 260px; /* cambia a 220 / 300 se vuoi */
+    max-width: 80%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.9);
+}
+
+/* =======================
+   PLAY THE GAME PAGE
+======================= */
+body.PlayTheGame {
+    background: #000;
+    color: white;
+}
+
+.music-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 233px; /* 🔑 spostato leggermente a sinistra */
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    z-index: 1000;
+}
+
+
