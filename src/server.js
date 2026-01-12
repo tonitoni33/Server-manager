@@ -101,7 +101,6 @@ app.post("/register", async (req, res) => {
 
         console.log("CONFIRM CODE:", confirmCode);
 
-        // redirect alla pagina confirm con codice visibile
         res.redirect(
             `/confirm?email=${encodeURIComponent(email)}&code=${confirmCode}`
         );
@@ -128,9 +127,9 @@ app.post("/confirm", async (req, res) => {
         await user.save();
 
         res.send(`
-            <h2>Account confirmed successfully!</h2>
-            <a href="/">Go Home</a>
-        `);
+      <h2>Account confirmed successfully!</h2>
+      <a href="/">Go Home</a>
+    `);
 
     } catch (err) {
         console.error("CONFIRM ERROR:", err);
@@ -139,22 +138,31 @@ app.post("/confirm", async (req, res) => {
 });
 
 // =======================
-// LOGIN (UNITY)
+// LOGIN (UNITY) - SICURO
 // =======================
 app.post("/login", async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { email, username, password } = req.body;
 
-        if (!username || !password)
+        if (!email || !username || !password) {
             return res.json({ success: false, message: "Missing fields" });
+        }
 
-        const user = await User.findOne({ username, confirmed: true });
-        if (!user)
-            return res.json({ success: false, message: "Invalid username" });
+        const user = await User.findOne({
+            email: email,
+            username: username,
+            confirmed: true
+        });
+
+        if (!user) {
+            return res.json({ success: false, message: "Invalid credentials" });
+        }
 
         const valid = await bcrypt.compare(password, user.password);
-        if (!valid)
-            return res.json({ success: false, message: "Wrong password" });
+
+        if (!valid) {
+            return res.json({ success: false, message: "Invalid credentials" });
+        }
 
         res.json({
             success: true,
